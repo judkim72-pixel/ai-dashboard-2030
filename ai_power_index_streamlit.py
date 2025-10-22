@@ -1,11 +1,12 @@
 # ai_power_index_streamlit.py
-# 2030 AI Power Index Dashboard + 2035 Market Projection
-# AEON Communications / MASSAMASS
+# 2030 AI Power Index Dashboard + 2035 Market Projection + AI Network Map
+# Author: Jud (AEON Communications)
 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import networkx as nx
 
 # ────────────────────────────────
 # PAGE SETTINGS
@@ -54,23 +55,23 @@ radar_data = pd.DataFrame({
     "Enterprise": [43, 45, 55, df.iloc[1, -1]],
     "Command": [22, 55, 57, df.iloc[2, -1]],
 })
-fig = go.Figure()
+fig_radar = go.Figure()
 for col in ["General", "Enterprise", "Command"]:
-    fig.add_trace(go.Scatterpolar(
+    fig_radar.add_trace(go.Scatterpolar(
         r=radar_data[col],
         theta=radar_data["Metric"],
         fill='toself',
         name=col
     ))
-fig.update_layout(
+fig_radar.update_layout(
     polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
     template="plotly_dark",
     title="AI Comparative Radar (2030)",
 )
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig_radar, use_container_width=True)
 
 # ────────────────────────────────
-# 3. INSIGHT SUMMARY SECTION
+# 3. INSIGHT SUMMARY
 # ────────────────────────────────
 st.markdown("---")
 st.markdown("### 🔍 AI Power Index Insights Summary")
@@ -114,7 +115,7 @@ st.markdown("""
 """)
 
 # ────────────────────────────────
-# 4. MARKET PROJECTION 2035 — 미래 예측 그래프
+# 4. MARKET PROJECTION 2035
 # ────────────────────────────────
 st.markdown("---")
 st.markdown("### 📈 AI Market Projection 2035 — Value Transition Forecast")
@@ -146,11 +147,62 @@ st.plotly_chart(fig_proj, use_container_width=True)
 st.markdown("""
 **예측 해석**
 - 2031~2033년 사이, **Command AI가 Enterprise AI의 성장 곡선을 교차**.  
-- 이는 방산·에너지·인프라 영역에서 **AI Command System**이 경제적 가치를 주도하게 됨을 의미.  
-- Enterprise AI는 여전히 조직 운영의 중심이지만, **산업 레벨 AI 통제계층**이 새 주도권을 형성.
+- 방산·에너지·인프라 영역에서 **AI Command System**이 경제적 가치를 주도하게 됨.  
+- Enterprise AI는 여전히 조직 운영의 중심이지만, **산업 레벨 통제 계층**이 새 주도권을 형성.
 """)
+
+# ────────────────────────────────
+# 5. AI 기업별 영향력 네트워크 맵
+# ────────────────────────────────
+st.markdown("---")
+st.markdown("### 🕸️ Global AI Ecosystem Influence Map (2025–2035)")
+
+# 네트워크 관계 정의
+edges = [
+    ("OpenAI", "Microsoft"),
+    ("Anthropic", "AWS"),
+    ("Anthropic", "Google"),
+    ("Palantir", "LIG Nex1"),
+    ("OpenAI", "NVIDIA"),
+    ("Google", "DeepMind"),
+    ("AWS", "Palantir"),
+]
+G = nx.Graph()
+G.add_edges_from(edges)
+pos = nx.spring_layout(G, seed=42)
+
+# Plotly 네트워크 그래프
+edge_x, edge_y = [], []
+for edge in G.edges():
+    x0, y0 = pos[edge[0]]
+    x1, y1 = pos[edge[1]]
+    edge_x += [x0, x1, None]
+    edge_y += [y0, y1, None]
+
+node_x, node_y = zip(*[pos[node] for node in G.nodes()])
+fig_net = go.Figure()
+fig_net.add_trace(go.Scatter(
+    x=edge_x, y=edge_y,
+    mode='lines', line=dict(color='gray', width=1),
+    hoverinfo='none'
+))
+fig_net.add_trace(go.Scatter(
+    x=node_x, y=node_y,
+    mode='markers+text',
+    text=list(G.nodes()),
+    textposition='top center',
+    marker=dict(size=20, color='#22c55e', line=dict(width=1, color='white')),
+    textfont=dict(color='white', size=12)
+))
+fig_net.update_layout(
+    title="AI Corporate Influence Network",
+    template="plotly_dark",
+    xaxis=dict(visible=False),
+    yaxis=dict(visible=False),
+)
+st.plotly_chart(fig_net, use_container_width=True)
 
 # ────────────────────────────────
 # END
 # ────────────────────────────────
-st.caption("© 2030 AEON Communications — AI Economic Intelligence Lab")
+st.caption("© 2030 AEON Communications · AI Economic Intelligence Lab")
