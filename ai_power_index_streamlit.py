@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 # ────────────────────────────────
 st.set_page_config(page_title="AI Power Index Dashboard 2030", layout="wide")
 st.title("2030 AI Power Index Dashboard")
-st.subheader("AEON Communications — MASSAMASS")
+st.subheader("AEON Communications")
 st.markdown("##### Power of Experience Design · AI Economic Foresight")
 
 # ────────────────────────────────
