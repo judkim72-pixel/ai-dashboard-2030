@@ -153,4 +153,4 @@ st.markdown("""
 # ────────────────────────────────
 # END
 # ────────────────────────────────
-st.caption("© 2030 AEON Communications · MASSAMASS — AI Economic Intelligence Lab")
+st.caption("© 2030 AEON Communications — AI Economic Intelligence Lab")
